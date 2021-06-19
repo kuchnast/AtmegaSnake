@@ -11,6 +11,11 @@
 #define MAX_X 128
 #define MAX_Y 64
 
+#define NUM_COUNTER 10
+
+const uint8_t pin_rows[4] = {38, 40, 42, 44};
+const uint8_t pin_columns[4] = {30, 32, 34, 36};
+
 typedef U8G2_SH1106_128X64_NONAME_F_HW_I2C Display;
 
 /**

@@ -386,7 +386,6 @@ public:
         case MODE::PULL_UP:
             setDDR_(0);
             setPORTR_(1);
-
             break;
 
         default:
@@ -418,4 +417,16 @@ public:
         setPORTR_(bit);
     }
 
+    void print()
+    {
+        Serial.print("Pin ");
+        Serial.print(pin_);
+        Serial.print(" mode ");
+        if(curr_mode_ == MODE::IN)
+            Serial.print("IN\n");
+        if (curr_mode_ == MODE::OUT)
+            Serial.print("OUT\n");
+        if (curr_mode_ == MODE::PULL_UP)
+            Serial.print("PULL_UP\n");
+    }
 };

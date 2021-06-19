@@ -26,6 +26,7 @@ private:
     uint8_t size_;
     RUCH curr_side_;
 
+
 public:
     Snake()
     {
