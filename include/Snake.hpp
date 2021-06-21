@@ -146,4 +146,9 @@ public:
 
         return false;
     }
+
+    uint8_t getSize() const
+    {
+        return size_;
+    }
 };

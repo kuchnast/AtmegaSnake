@@ -9,6 +9,8 @@ Joystick j(J1_X_AXIS_PIN, J1_Y_AXIS_PIN, J1_BUTTON_PIN);
 Keyboard4x4 keyboard(pin_rows, pin_columns);
 Menu menu(display.getU8G2());
 
+void (*resetFunc)(void) = 0;
+
 void setup(void)
 {
   Serial.begin(9600);
@@ -20,56 +22,135 @@ void setup(void)
   menu.showWelcomeScrean(0);
   _delay_ms(2000);
 
-  uint8_t highlight = 0;
-  do
+  while (1)
   {
-    if (j.sprawdzRuch() == RUCH::DOWN || keyboard.read() == '8')
+    uint8_t highlight = menu.MainMenu(j, keyboard);
+
+    if (highlight == 0)
     {
-      while (j.sprawdzRuch() == RUCH::DOWN || keyboard.read() == '8') {}
-      if(highlight == 3)
-        highlight = 0;
-      else
-        ++highlight;
+      menu.showSnakeScrean();
+      while (j.sprawdzPrzycisk() && !keyboard.read() && j.sprawdzRuch() == RUCH::NONE)
+      {
+      }
+      _delay_ms(200);
+      break;
     }
-
-    if (j.sprawdzRuch() == RUCH::UP || keyboard.read() == '2')
+    else if (highlight == 1)
     {
-      while (j.sprawdzRuch() == RUCH::UP || keyboard.read() == '2'){}
-      if (highlight)
-        --highlight;
-      else
-        highlight = 3;
     }
-
-    menu.ShowMainMenu(highlight);
-  }
-  while (j.sprawdzPrzycisk() && keyboard.read() != '5');
-
-  if(highlight == 0)
-  {
-    menu.showSnakeScrean();
-    while (j.sprawdzPrzycisk() && !keyboard.read() && j.sprawdzRuch() == RUCH::NONE){}
+    else if (highlight == 2)
+    {
+      _delay_ms(200);
+      while (1)
+      {
+        uint8_t highlight_setings = menu.SetingsMenu(j, keyboard);
+        if (highlight_setings == 0)
+        {
+          _delay_ms(200);
+          if (keyboard.getIsActive())
+          {
+            keyboard.setIsActive(false);
+            j.setIsActive(true);
+          }
+          else
+          {
+            keyboard.setIsActive(true);
+            j.setIsActive(false);
+          }
+        }
+        else if (highlight_setings == 1)
+        {
+          _delay_ms(200);
+          if (j.getIsActive())
+          {
+            keyboard.setIsActive(true);
+            j.setIsActive(false);
+          }
+          else
+          {
+            keyboard.setIsActive(false);
+            j.setIsActive(true);
+          }
+        }
+        else
+        {
+          _delay_ms(200);
+          break;
+        }
+      }
+    }
+    else
+    {
+      resetFunc();
+    }
   }
 }
 
 void loop(void)
 {
+  s_game.gameSpeed(20);
 
-  if (j.sprawdzPrzycisk() == false)
+  if(j.getIsActive())
   {
-    s_game.gamePause(display.getU8G2());
-    _delay_ms(1000);
-    while (j.sprawdzPrzycisk() == true)
+    if (j.sprawdzPrzycisk() == false)
     {
-      _delay_ms(50);
+      s_game.gamePause(display.getU8G2());
+      _delay_ms(1000);
+      while (j.sprawdzPrzycisk() == true)
+      {
+        _delay_ms(50);
+      }
+      s_game.counter(display.getU8G2());
     }
-    _delay_ms(1000);
+  }
+  else
+  {
+    if (keyboard.read() == '5')
+    {
+      s_game.gamePause(display.getU8G2());
+      _delay_ms(1000);
+      while (keyboard.read() != '5')
+      {
+        _delay_ms(50);
+      }
+      s_game.counter(display.getU8G2());
+    }
   }
 
-  s_game.makeMove(j.sprawdzRuch());
+  if (j.getIsActive())
+    s_game.makeMove(j.sprawdzRuch());
+  else
+  {
+    switch (keyboard.read())
+    {
+    case '2':
+      s_game.makeMove(RUCH::UP);
+      break;
+
+    case '4':
+      s_game.makeMove(RUCH::LEFT);
+      break;
+
+    case '6':
+      s_game.makeMove(RUCH::RIGHT);
+      break;
+
+    case '8':
+      s_game.makeMove(RUCH::DOWN);
+      break;
+
+    default:
+      s_game.makeMove(RUCH::NONE);
+      break;
+    }
+  }
+
   s_game.draw(display.getU8G2());
-  if(s_game.checkCollisions())
+  if (s_game.checkCollisions())
+  {
     s_game.gameOver(display.getU8G2());
+    resetFunc();
+  }
 
   s_game.eatApple();
 

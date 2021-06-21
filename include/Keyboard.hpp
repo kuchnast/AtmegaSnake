@@ -19,6 +19,7 @@ private:
     DigitalPin **columns_;
     char prev_key_;
     const uint8_t counter_;
+    bool is_active_;
 
     char checkWhatPressed_()
     {
@@ -47,7 +48,7 @@ private:
     }
 
 public:
-    Keyboard4x4(const uint8_t *rows, const uint8_t *columns) : prev_key_('\0'), counter_(NUM_COUNTER)
+    Keyboard4x4(const uint8_t *rows, const uint8_t *columns) : prev_key_('\0'), counter_(NUM_COUNTER), is_active_(false)
     {
         rows_ = new DigitalPin *[4];
         columns_ = new DigitalPin *[4];
@@ -71,8 +72,21 @@ public:
         delete[] columns_;
     }
 
+    void setIsActive(bool state)
+    {
+        is_active_ = state;
+    }
+
+    bool getIsActive() const
+    {
+        return is_active_;
+    }
+
     char read()
     {
+        if(!is_active_)
+            return '\0';
+
         char temp = checkWhatPressed_();
         if(temp == prev_key_)
             return temp;

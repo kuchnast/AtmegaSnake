@@ -6,6 +6,7 @@
 #include "SnakeGame.hpp"
 #include "DigitalPin.hpp"
 #include "Keyboard.hpp"
+#include "Joystick.hpp"
 
 static const unsigned char snake_bits[] PROGMEM = {
     0x00, 0x00, 0xfe, 0xff, 0x3f, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,
@@ -132,7 +133,40 @@ public:
         } while (display_.nextPage());
     }
 
-    void ShowSetingsMenu(uint8_t highlight_opt)
+    uint8_t MainMenu(Joystick & j, Keyboard4x4 & keyboard)
+    {
+        uint8_t highlight = 0;
+        do
+        {
+            if (j.sprawdzRuch() == RUCH::DOWN || keyboard.read() == '8')
+            {
+                while (j.sprawdzRuch() == RUCH::DOWN || keyboard.read() == '8')
+                {
+                }
+                if (highlight == 3)
+                    highlight = 0;
+                else
+                    ++highlight;
+            }
+
+            if (j.sprawdzRuch() == RUCH::UP || keyboard.read() == '2')
+            {
+                while (j.sprawdzRuch() == RUCH::UP || keyboard.read() == '2')
+                {
+                }
+                if (highlight)
+                    --highlight;
+                else
+                    highlight = 3;
+            }
+
+            ShowMainMenu(highlight);
+        } while (j.sprawdzPrzycisk() && keyboard.read() != '5');
+
+        return highlight;
+    }
+
+    void ShowSetingsMenu(uint8_t highlight_opt, bool keyboard_is_active, bool joystick_is_active)
     {
         display_.firstPage();
         do
@@ -145,25 +179,67 @@ public:
                 display_.setDrawColor(0);
             else
                 display_.setDrawColor(1);
-            display_.drawStr(36, 15, "PLAY SNAKE");
+            display_.drawStr(20, 15, "KEYBOARD");
 
             if (highlight_opt == 1)
                 display_.setDrawColor(0);
             else
                 display_.setDrawColor(1);
-            display_.drawStr(36, 30, "HIGH SCORE");
+            display_.drawStr(20, 30, "JOYSTICK");
 
             if (highlight_opt == 2)
                 display_.setDrawColor(0);
             else
                 display_.setDrawColor(1);
-            display_.drawStr(45, 45, "SETINGS");
+            display_.drawStr(20, 45, "BACK TO MENU");
 
-            if (highlight_opt == 3)
-                display_.setDrawColor(0);
+            display_.setDrawColor(1);
+
+            if (keyboard_is_active)
+                display_.drawBox(88, 3, 12, 12);
             else
-                display_.setDrawColor(1);
-            display_.drawStr(50, 60, "EXIT");
+                display_.drawFrame(88, 3, 12, 12);
+
+            if (joystick_is_active)
+                display_.drawBox(88, 18, 12, 12);
+            else
+                display_.drawFrame(88, 18, 12, 12);
         } while (display_.nextPage());
     }
+
+    uint8_t SetingsMenu(Joystick &j, Keyboard4x4 &keyboard)
+    {
+        uint8_t highlight = 0;
+
+        do
+        {
+            if (j.sprawdzRuch() == RUCH::DOWN || keyboard.read() == '8')
+            {
+                while (j.sprawdzRuch() == RUCH::DOWN || keyboard.read() == '8')
+                {
+                }
+                if (highlight == 2)
+                    highlight = 0;
+                else
+                    ++highlight;
+            }
+
+            if (j.sprawdzRuch() == RUCH::UP || keyboard.read() == '2')
+            {
+                while (j.sprawdzRuch() == RUCH::UP || keyboard.read() == '2')
+                {
+                }
+                if (highlight)
+                    --highlight;
+                else
+                    highlight = 2;
+            }
+
+            ShowSetingsMenu(highlight, keyboard.getIsActive(), j.getIsActive());
+        } while (j.sprawdzPrzycisk() && keyboard.read() != '5');
+
+        return highlight;
+    }
+
+    
 };

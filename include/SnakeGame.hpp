@@ -5,6 +5,7 @@
 #include "Snake.hpp"
 #include "Frame.hpp"
 #include "Apple.hpp"
+#include "Points.hpp"
 
 class SnakeGame
 {
@@ -12,9 +13,10 @@ private:
     Frame frame_;
     Snake snake_;
     Apple apple_;
+    Points points_;
 
 public:
-    SnakeGame() : frame_(3), snake_(), apple_() 
+    SnakeGame() : frame_(3), snake_(), apple_(), points_()
     {
     }
 
@@ -32,6 +34,7 @@ public:
     void makeMove(const RUCH & r)
     {
         snake_.move(r);
+        points_.AddPoint();
     }
 
     bool checkCollisions()
@@ -49,6 +52,7 @@ public:
 
         snake_.expandTail();
         apple_ = Apple();
+        points_.Add(100);
         return true;
     }
 
@@ -56,10 +60,10 @@ public:
     {
         display.setFont(u8g2_font_lucasarts_scumm_subtitle_o_tf);
         display.drawStr(10, 22, "GAME OVER");
-        String s = "SCORE: " + String(0);
-        char c[11];
-        s.toCharArray(c, 11);
-        display.drawStr(22, 42, c);
+        String s = "SCORE: " + String(points_.GetScore());
+        char c[12];
+        s.toCharArray(c, 12);
+        display.drawStr(4, 42, c);
         display.nextPage();
         delay(2000);
     }
@@ -67,8 +71,43 @@ public:
     void gamePause(Display &display)
     {
         display.setFont(u8g2_font_lucasarts_scumm_subtitle_o_tf);
-        display.drawStr(10, 22, "PAUSE");
+        display.drawStr(10, 32, "PAUSE");
         display.nextPage();
     }
+
+    void counter(Display &display)
+    {
+        display.setFont(u8g2_font_lucasarts_scumm_subtitle_o_tf);
+        display.drawStr(30, 42, "3");
+        display.nextPage();
+        _delay_ms(1000);
+        display.drawStr(30, 42, "2");
+        display.nextPage();
+        _delay_ms(1000);
+        display.drawStr(30, 42, "1");
+        display.nextPage();
+        _delay_ms(1000);
+        display.drawStr(30, 42, "GO!");
+        display.nextPage();
+        _delay_ms(1000);
+    }
+
+    uint8_t getSnakeSize() const
+    {
+        return snake_.getSize();
+    }
+
+    void gameSpeed(uint8_t max_size)
+    {
+        if (getSnakeSize() < max_size)
+        {
+            for (uint8_t i = 0; i < max_size - getSnakeSize(); ++i)
+            {
+                _delay_ms(20);
+            }
+        }
+                
+    }
+
 };
 

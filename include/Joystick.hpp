@@ -43,12 +43,26 @@ class Joystick
         AnalogInputPin x_axis_;
         AnalogInputPin y_axis_;
         DigitalPin button_;
+        bool is_active_;
 
     public:
-        Joystick(uint8_t analog_pin_x, uint8_t analog_pin_y, uint8_t button_pin) : x_axis_(analog_pin_x), y_axis_(analog_pin_y), button_(button_pin, MODE::PULL_UP) {}
+        Joystick(uint8_t analog_pin_x, uint8_t analog_pin_y, uint8_t button_pin) : x_axis_(analog_pin_x), y_axis_(analog_pin_y), button_(button_pin, MODE::PULL_UP), is_active_(true) {}
+
+        void setIsActive(bool state)
+        {
+            is_active_ = state;
+        }
+
+        bool getIsActive() const
+        {
+            return is_active_;
+        }
 
         RUCH sprawdzRuch()
         {
+            if(!is_active_)
+                return RUCH::NONE;
+
             uint16_t x = x_axis_.read();
             uint16_t y = y_axis_.read();
 
