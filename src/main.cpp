@@ -17,10 +17,10 @@ void setup(void)
   display.init();
   s_game.draw(display.getU8G2());
 
-  menu.showWelcomeScrean(1);
-  _delay_ms(2000);
-  menu.showWelcomeScrean(0);
-  _delay_ms(2000);
+  //menu.showWelcomeScrean(1);
+  //_delay_ms(2000);
+  //menu.showWelcomeScrean(0);
+  //_delay_ms(2000);
 
   while (1)
   {
@@ -37,6 +37,9 @@ void setup(void)
     }
     else if (highlight == 1)
     {
+      _delay_ms(200);
+      menu.ScoreMenu(j, keyboard);
+      _delay_ms(200);
     }
     else if (highlight == 2)
     {

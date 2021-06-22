@@ -6,6 +6,7 @@
 #include "Frame.hpp"
 #include "Apple.hpp"
 #include "Points.hpp"
+#include "SingleRecord.hpp"
 
 class SnakeGame
 {
@@ -58,12 +59,22 @@ public:
 
     void gameOver(Display & display)
     {
+        SingleRecord t(10);
+        char *nick = new char[5];
+        nick[0] = 'L';
+        nick[1] = 'A';
+        nick[2] = 'S';
+        nick[3] = 'T';
+        nick[4] = ' ';
+        t.setRecord(nick, points_.GetScore());
+        delete nick;
+
         display.setFont(u8g2_font_lucasarts_scumm_subtitle_o_tf);
-        display.drawStr(10, 22, "GAME OVER");
+        display.drawStr(6, 22, "GAME OVER");
         String s = "SCORE: " + String(points_.GetScore());
         char c[12];
         s.toCharArray(c, 12);
-        display.drawStr(4, 42, c);
+        display.drawStr(6, 42, c);
         display.nextPage();
         delay(2000);
     }

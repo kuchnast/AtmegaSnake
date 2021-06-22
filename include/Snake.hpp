@@ -79,6 +79,12 @@ public:
         //Serial.print("Before: ");
         //LinkedList<SnakeNode>::print(body_.getHead());
         //Serial.println();
+        Serial.print("BEFORE: ");
+        Serial.print("r side: ");
+        Serial.print(print(r));
+        Serial.print(" current side: ");
+        Serial.println(print(curr_side_));
+        
 
         if (size_ == 1 || czyRuch(curr_side_, r))
         {
@@ -90,11 +96,10 @@ public:
             switch (curr_side_)
             {
             case RUCH::DOWN:
-
-                temp.y -= 4;
+                temp.y += 4;
                 break;
             case RUCH::UP:
-                temp.y += 4;
+                temp.y -= 4;
                 break;
             case RUCH::LEFT:
                 temp.x -= 4;
@@ -105,6 +110,13 @@ public:
             default:
                 break;
             }
+
+            Serial.print("AFTER: ");
+            Serial.print("r side: ");
+            Serial.print(print(r));
+            Serial.print(" current side: ");
+            Serial.println(print(curr_side_));
+
             body_.addFront(temp);
 
             //Serial.print("AddFront: ");

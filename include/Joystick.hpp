@@ -19,6 +19,30 @@ enum class RUCH
     RIGHT = 0b1000
 };
 
+char print(const RUCH & r)
+{
+    switch (r)
+    {
+    case RUCH::NONE :
+        return 'N';
+        break;
+    case RUCH::UP:
+        return 'U';
+        break;
+    case RUCH::DOWN:
+        return 'D';
+        break;
+    case RUCH::LEFT:
+        return 'L';
+        break;
+    case RUCH::RIGHT:
+        return 'R';
+        break;
+    }
+
+    return '\0';
+}
+
 bool czyRuch(const RUCH &r1, const RUCH &r2)
 {
     //dla dwóch tych samych sygnałów - ruch
@@ -72,9 +96,9 @@ class Joystick
             //Serial.print(y);
 
             if (x > 800)
-                return RUCH::UP;
-            else if (x < 200 )
                 return RUCH::DOWN;
+            else if (x < 200 )
+                return RUCH::UP;
             else if (y > 800)
                 return RUCH::LEFT;
             else if (y < 200)

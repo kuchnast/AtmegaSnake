@@ -7,6 +7,7 @@
 #include "DigitalPin.hpp"
 #include "Keyboard.hpp"
 #include "Joystick.hpp"
+#include "SingleRecord.hpp"
 
 static const unsigned char snake_bits[] PROGMEM = {
     0x00, 0x00, 0xfe, 0xff, 0x3f, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff,
@@ -117,7 +118,7 @@ public:
                 display_.setDrawColor(0);
             else
                 display_.setDrawColor(1);
-            display_.drawStr(36, 30, "HIGH SCORE");
+            display_.drawStr(36, 30, "LAST SCORE");
 
             if (highlight_opt == 2)
                 display_.setDrawColor(0);
@@ -241,5 +242,10 @@ public:
         return highlight;
     }
 
-    
+    void ScoreMenu(Joystick &j, Keyboard4x4 &keyboard)
+    {
+        SingleRecord t(10);
+        t.showRecord(display_, 40, 40);
+        while (j.sprawdzPrzycisk() && keyboard.read() != '5'){}
+    }
 };

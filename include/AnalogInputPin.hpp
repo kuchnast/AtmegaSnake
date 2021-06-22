@@ -16,12 +16,7 @@ class AnalogInputPin
      */
         AnalogInputPin(uint8_t analog_pin): pin_(analog_pin % 16)
         {
-            // ustaw bit na 0 odpowiedniego pinu ADC w rejestrze DIDR0 lub DIDR1, aby go załączyć
-            if (pin_ < 8)
-                cbi(DIDR0, pin_);
-            else
-                cbi(DIDR1, pin_);
-
+            // aktywuj przetwornik analogowo-cyfrowy
             sbi(ADCSRA, ADEN);
         }
 
@@ -29,6 +24,7 @@ class AnalogInputPin
         {
             uint8_t low, high;
 
+            // ustaw bit na 0 odpowiedniego pinu ADC w rejestrze DIDR0 lub DIDR1, aby go załączyć
             if (pin_ < 8)
                 cbi(DIDR0, pin_);
             else
